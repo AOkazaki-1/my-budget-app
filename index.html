@@ -10,7 +10,8 @@
      plain script tag for exactly that reason.
 
      There are deliberately NO links in this page, to anywhere. Every source
-     a reader can see is text already carried in data.js. -->
+     a reader can see is text already carried in data.js. "Tell me more"
+     expands in place: no modal, and nothing navigates away. -->
 <script src="data.js"></script>
 
 <style>
@@ -74,18 +75,33 @@
   .todo{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line);
     font-size:14px;color:var(--ink-3);font-style:italic}
 
-  details{margin-top:8px}
+  /* ---- tell me more (expands in place) ---- */
+  .more{margin-top:8px;font:inherit;font-size:14px;color:var(--accent-ink);
+    background:none;border:0;padding:5px 0;cursor:pointer;text-align:left;
+    min-height:32px;display:inline-flex;align-items:center;gap:6px}
+  .more:hover{text-decoration:underline}
+  .more:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:3px}
+  .more .chev{transition:transform .15s ease;font-size:11px;line-height:1}
+  .more[aria-expanded="true"] .chev{transform:rotate(90deg)}
+  .detail{margin-top:4px;padding-left:12px;border-left:2px solid var(--line)}
+  .detail p{margin:0 0 10px;font-size:15px;color:var(--ink-2)}
+
+  details{margin-top:6px}
   summary{font-size:13px;color:var(--accent-ink);cursor:pointer;
     display:inline-block;padding:4px 0;min-height:24px}
   summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:3px}
   blockquote{margin:8px 0 0;padding:11px 13px;background:var(--quiet);
     border-left:3px solid var(--line);border-radius:0 6px 6px 0;
     font-size:14px;color:var(--ink-2)}
+  .cite-meta{margin:5px 0 0;font-size:12px;color:var(--ink-3);
+    word-break:break-word;line-height:1.45}
+  .cite + .cite{margin-top:12px}
 
   /* ---- cost of living card ---- */
   .card.col{background:var(--col-bg);border-color:var(--col-line)}
   .card.col .framing{margin:5px 0 0;font-size:15px;color:var(--col-ink);font-weight:600}
   .card.col .points li{border-top-color:var(--col-line)}
+  .card.col .detail{border-left-color:var(--col-line)}
   .note{margin:14px 0 0;padding:11px 13px;background:#fff;border:1px solid var(--col-line);
     border-radius:8px;font-size:14px;color:var(--col-ink)}
   .card.col blockquote{background:#fff;border-left-color:var(--col-line)}
@@ -178,17 +194,29 @@
     return b;
   }
 
-  // Honesty rule 1: the statement AND the heading are always named (headings
-  // like "Purpose" repeat across statements), and the verbatim excerpt sits
-  // one click away, on the page, with nothing to follow off-site.
-  function sourceBlock(source) {
-    var frag = document.createDocumentFragment();
-    frag.appendChild(el("p", "src", source.statement + " · " + source.heading));
+  // One quoted passage plus where in the papers it sits. There is no page
+  // number because the papers carry none: the .docx originals store no fixed
+  // pagination, so the heading anchor is the finest locator available.
+  function cite(source) {
+    var box = el("div", "cite");
+    box.appendChild(el("blockquote", null, "“" + source.excerpt + "”"));
+    var where = source.document + " · " + source.heading;
+    if (source.anchor) where += " · #" + source.anchor;
+    box.appendChild(el("p", "cite-meta", where));
+    return box;
+  }
+
+  // Honesty rule 1: no claim without its evidence beside it. Everything the
+  // detail asserts is backed here, including the lines from other statements.
+  function whereFrom(sources) {
     var d = el("details");
     d.appendChild(el("summary", null, "Where this comes from"));
-    d.appendChild(el("blockquote", null, "“" + source.excerpt + "”"));
-    frag.appendChild(d);
-    return frag;
+    sources.forEach(function (s) { d.appendChild(cite(s)); });
+    return d;
+  }
+
+  function allSources(point) {
+    return [point.source].concat(point.extraSources || []);
   }
 
   function pointsList(points) {
@@ -196,7 +224,38 @@
     points.forEach(function (p) {
       var li = el("li");
       li.appendChild(el("p", "summary", p.summary));
-      li.appendChild(sourceBlock(p.source));
+      // Statement and heading stay visible without opening anything; headings
+      // repeat across statements, so the statement is always named too.
+      li.appendChild(el("p", "src", p.source.statement + " · " + p.source.heading));
+
+      if (p.detail && p.detail.length) {
+        var region = el("div", "detail");
+        region.id = p.id + "-detail";
+        region.hidden = true;
+        p.detail.forEach(function (para) { region.appendChild(el("p", null, para)); });
+        region.appendChild(whereFrom(allSources(p)));
+
+        var btn = el("button", "more");
+        btn.type = "button";
+        btn.setAttribute("aria-expanded", "false");
+        btn.setAttribute("aria-controls", region.id);
+        var chev = el("span", "chev", "▶");
+        chev.setAttribute("aria-hidden", "true");
+        var lbl = el("span", null, "Tell me more");
+        btn.appendChild(chev);
+        btn.appendChild(lbl);
+        btn.addEventListener("click", function () {
+          var open = btn.getAttribute("aria-expanded") === "true";
+          btn.setAttribute("aria-expanded", open ? "false" : "true");
+          region.hidden = open;
+          lbl.textContent = open ? "Tell me more" : "Show less";
+        });
+
+        li.appendChild(btn);
+        li.appendChild(region);
+      } else {
+        li.appendChild(whereFrom(allSources(p)));
+      }
       ul.appendChild(li);
     });
     return ul;
@@ -212,7 +271,9 @@
     fig.appendChild(el("span", "unit", area.headline.unit));
     card.appendChild(fig);
     card.appendChild(el("p", "period", area.headline.period));
-    card.appendChild(sourceBlock(area.source));
+    card.appendChild(el("p", "src",
+      area.source.statement + " · " + area.source.heading));
+    card.appendChild(whereFrom([area.source]));
     card.appendChild(el("p", "blurb", area.blurb));
 
     if (area.points.length) {

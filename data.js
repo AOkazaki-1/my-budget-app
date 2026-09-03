@@ -1,20 +1,20 @@
 // Data for "Find Yourself in the Budget" — 2026-27 ACT Budget.
 //
-// Every `excerpt` below is copied verbatim from the statement named beside
-// it, and is verified as a literal substring of the source file at build
-// time. Do not paraphrase these fields.
+// GENERATED FILE. Every `excerpt` is copied verbatim from the statement named
+// beside it, and is verified as a literal substring of the source markdown at
+// build time. `document`, `heading` and `anchor` are derived from the file too.
+// Do not hand-edit these fields: retyping silently corrupts the non-breaking
+// spaces the Budget papers are full of.
 //
-// Sources:
-//   areas[].source, health points, cost-of-living crisis fund point
-//     -> data/markdown/03-wellbeing.md  (Wellbeing Budget Statement)
-//   concession points, costOfLiving.concessions
-//     -> data/markdown/01-cost-of-living.md, Table 3.3.1
-//   costOfLiving.scenarios
-//     -> data/extracted/household-scenarios.csv (Table 3.3.2)
+// `source`      the line the point's headline claim comes from
+// `extraSources` further lines backing claims made in `detail`
 //
 // The `Total` row of concessions.csv is dropped on purpose (honesty rule 5).
 // Money units differ and must never be mixed: areas[].headline is in $ MILLION,
 // concession costs are in $ THOUSAND, scenario figures are whole dollars.
+//
+// There are no page numbers because the papers carry none: the .docx originals
+// store no fixed pagination, so the heading anchor is the finest locator there is.
 
 window.DATA = {
   "meta": {
@@ -33,45 +33,100 @@ window.DATA = {
       },
       "source": {
         "statement": "Wellbeing Budget Statement",
+        "document": "2026-27-ACT-Budget-Wellbeing-Budget-Statement.docx",
         "heading": "Mental and physical health",
+        "anchor": "mental-and-physical-health",
         "excerpt": "The 2026-27 Budget will support the health of Canberrans through the investment of $910 million over four years including:"
       },
       "points": [
         {
           "id": "health-northside-hospital",
           "summary": "A new hospital is being built for Canberra's north side.",
+          "detail": [
+            "The new Northside Hospital is one of the things the $910 million is said to cover.",
+            "What is funded now is the early stage of the build. Canberra Health Services lists progressing early works for the hospital among its priorities for the coming year. The lines quoted here don't say when it will open."
+          ],
           "source": {
             "statement": "Wellbeing Budget Statement",
+            "document": "2026-27-ACT-Budget-Wellbeing-Budget-Statement.docx",
             "heading": "Mental and physical health",
+            "anchor": "mental-and-physical-health",
             "excerpt": "Delivering the new Northside Hospital"
-          }
+          },
+          "extraSources": [
+            {
+              "statement": "Statement C — Health and Community Services",
+              "document": "ACT-Budget-2026-27-Statement-C.docx",
+              "heading": "New and modernising our infrastructure",
+              "anchor": "new-and-modernising-our-infrastructure",
+              "excerpt": "Progress the delivery of early works for the new Northside Hospital."
+            }
+          ]
         },
         {
           "id": "health-south-tuggeranong",
           "summary": "A newly built health centre in South Tuggeranong is opening.",
+          "detail": [
+            "The centre is at Conder, in Canberra's south, and the stated aim is care closer to home for people living there.",
+            "It is meant to run community-based services, including paediatrics, and services that help prevent and manage long-term illness. The papers set aside $4.1 million over four years to operate it."
+          ],
           "source": {
             "statement": "Wellbeing Budget Statement",
+            "document": "2026-27-ACT-Budget-Wellbeing-Budget-Statement.docx",
             "heading": "Mental and physical health",
+            "anchor": "mental-and-physical-health",
             "excerpt": "Opening the newly constructed South Tuggeranong Health Centre"
-          }
+          },
+          "extraSources": [
+            {
+              "statement": "Women's Budget Statement",
+              "document": "2026-27-Womens-Budget-Statement.docx",
+              "heading": "Accessible services",
+              "anchor": "accessible-services",
+              "excerpt": "Funding of $4.1 million over 4 years from 2026-27 to operate the new South Tuggeranong Health Centre in Conder will improve access to care closer to home in Canberra’s south. The centre will support delivery of community-based services, including paediatrics and services that support prevention, early intervention and management of chronic illness. This is expected to particularly benefit women, who are more likely than men to experience long-term health conditions. Women also make up a significant proportion of the health workforce and will benefit from the employment and economic opportunities associated with expanding services in Canberra’s south."
+            }
+          ]
         },
         {
           "id": "health-rapid-access-clinic",
           "summary": "The Rapid Access Clinic is getting more capacity to find lung cancer earlier.",
+          "detail": [
+            "The clinic already exists. What this Budget does is increase how much it can handle.",
+            "The stated purpose is earlier detection and better joined-up care for people who have lung cancer, or are at risk of it.",
+            "This is the whole of what the Budget papers say about the measure. The single sentence below is the only mention of it anywhere in the statements published with this Budget."
+          ],
           "source": {
             "statement": "Wellbeing Budget Statement",
+            "document": "2026-27-ACT-Budget-Wellbeing-Budget-Statement.docx",
             "heading": "Mental and physical health",
+            "anchor": "mental-and-physical-health",
             "excerpt": "Increasing capacity at Canberra Health Services’ Rapid Access Clinic to improve early detection and integrated care for individuals with, or at risk of, lung cancer."
-          }
+          },
+          "extraSources": []
         },
         {
           "id": "health-palliative-care",
           "summary": "Canberra Hospital is opening a unit for people needing palliative care.",
+          "detail": [
+            "Palliative care is care for people with a serious illness. The stated purpose of the unit is to relieve symptoms and improve quality of life, rather than to cure.",
+            "It is one of the new initiatives Canberra Health Services names as a reason its staff numbers are going up."
+          ],
           "source": {
             "statement": "Wellbeing Budget Statement",
+            "document": "2026-27-ACT-Budget-Wellbeing-Budget-Statement.docx",
             "heading": "Mental and physical health",
+            "anchor": "mental-and-physical-health",
             "excerpt": "Operationalising the Acute Palliative Care Unit at Canberra Hospital. The facility will provide specialised medical care that relieves symptoms and improves quality of life."
-          }
+          },
+          "extraSources": [
+            {
+              "statement": "Statement C — Health and Community Services",
+              "document": "ACT-Budget-2026-27-Statement-C.docx",
+              "heading": "Estimated Employment Levels",
+              "anchor": "estimated-employment-levels-3",
+              "excerpt": "The increase of 460 FTE from 2025-26 estimated outcome to 2026-27 Budget is mainly due to new initiatives including, Insourcing cleaning and food services and Acute Palliative Care Unit implementation. In addition, Canberra Health Services is continuing to focus on converting and transitioning premium labour and contract services to employed workforce."
+            }
+          ]
         }
       ]
     },
@@ -87,7 +142,9 @@ window.DATA = {
       },
       "source": {
         "statement": "Wellbeing Budget Statement",
+        "document": "2026-27-ACT-Budget-Wellbeing-Budget-Statement.docx",
         "heading": "Housing",
+        "anchor": "housing",
         "excerpt": "The 2026–27 Budget includes more than $770 million in funding over four years for housing initiatives."
       },
       "points": []
@@ -104,7 +161,9 @@ window.DATA = {
       },
       "source": {
         "statement": "Wellbeing Budget Statement",
+        "document": "2026-27-ACT-Budget-Wellbeing-Budget-Statement.docx",
         "heading": "Wellbeing Domains",
+        "anchor": "wellbeing-domains",
         "excerpt": "Transport, city services, environment and climate – we are providing $343.1 million in funding – this category is predominantly aligned to the wellbeing domains of Environment and climate, Access and connectivity and aspects of the Safety domain."
       },
       "points": []
@@ -121,7 +180,9 @@ window.DATA = {
       },
       "source": {
         "statement": "Wellbeing Budget Statement",
+        "document": "2026-27-ACT-Budget-Wellbeing-Budget-Statement.docx",
         "heading": "Wellbeing Domains",
+        "anchor": "wellbeing-domains",
         "excerpt": "Education and training – we are providing nearly $253 million in funding – this category is predominantly aligned to the wellbeing domain of Education and life-long learning and aspects of the Environment and climate, and Health domains."
       },
       "points": []
@@ -138,7 +199,9 @@ window.DATA = {
       },
       "source": {
         "statement": "Wellbeing Budget Statement",
+        "document": "2026-27-ACT-Budget-Wellbeing-Budget-Statement.docx",
         "heading": "Wellbeing Domains",
+        "anchor": "wellbeing-domains",
         "excerpt": "Public administration – we are providing $202 million in funding — this category is aligned to the wellbeing domains of Governance and institutions and the Economy."
       },
       "points": []
@@ -155,7 +218,9 @@ window.DATA = {
       },
       "source": {
         "statement": "Wellbeing Budget Statement",
+        "document": "2026-27-ACT-Budget-Wellbeing-Budget-Statement.docx",
         "heading": "Wellbeing Domains",
+        "anchor": "wellbeing-domains",
         "excerpt": "Community support, social inclusion and safety – we are providing $182.6 million in funding – this category is predominantly aligned to the wellbeing domains of Social connection, Identity and belonging, and Safety."
       },
       "points": []
@@ -172,7 +237,9 @@ window.DATA = {
       },
       "source": {
         "statement": "Wellbeing Budget Statement",
+        "document": "2026-27-ACT-Budget-Wellbeing-Budget-Statement.docx",
         "heading": "Wellbeing Domains",
+        "anchor": "wellbeing-domains",
         "excerpt": "Jobs, entertainment, sport and culture – we are providing $143.5 million in funding – this category is aligned to the wellbeing domains of Governance and institutions, Economy, and aspects of Social connection, Identity and belonging and Living standards domains."
       },
       "points": []
@@ -188,38 +255,122 @@ window.DATA = {
       {
         "id": "col-utilities-rebate",
         "summary": "There is an $800 rebate on electricity, gas and water bills.",
+        "detail": [
+          "The rebate is worth $800 off utility bills. It was made permanent in last year's Budget, so it is ongoing rather than a one-off.",
+          "The papers note that Canberra households typically use more energy, and pay more for it, than households elsewhere in the country, because of the climate here.",
+          "Around 33,200 households are expected to receive it in 2026-27. Who counts as eligible is not set out in these papers."
+        ],
         "source": {
           "statement": "Cost of Living Statement",
+          "document": "2026-27-ACT-Budget-Cost-of-Living-Statement.docx",
           "heading": "Concessions",
+          "anchor": "concessions",
           "excerpt": "$800 rebate on utility bills."
-        }
+        },
+        "extraSources": [
+          {
+            "statement": "Cost of Living Statement",
+            "document": "2026-27-ACT-Budget-Cost-of-Living-Statement.docx",
+            "heading": "Utilities",
+            "anchor": "utilities",
+            "excerpt": "Utilities are a major household cost. ACT households typically use more energy, and face higher energy costs, than households in other states and territories because of the local climate. The ACT Government is continuing to support vulnerable households with the ongoing $800 Electricity, Gas and Water Rebate, which was made permanent in the 2025-26 Budget. The rebate eases the financial burden of essential utility costs for eligible households."
+          },
+          {
+            "statement": "Cost of Living Statement",
+            "document": "2026-27-ACT-Budget-Cost-of-Living-Statement.docx",
+            "heading": "Concessions",
+            "anchor": "concessions",
+            "excerpt": "33,200 households"
+          }
+        ]
       },
       {
         "id": "col-pensioner-rates",
         "summary": "Pensioners can get half off their general rates, capped at $750 a year.",
+        "detail": [
+          "This rebate takes 50 per cent off the general rates bill, up to $750 a year.",
+          "There is a second, separate rebate on the Police, Fire and Emergency Services Levy. That one goes up by $18 to $133 in 2026-27.",
+          "For context, the papers say the average residential rates bill, levies included, goes up 5 per cent this year."
+        ],
         "source": {
           "statement": "Cost of Living Statement",
+          "document": "2026-27-ACT-Budget-Cost-of-Living-Statement.docx",
           "heading": "Concessions",
+          "anchor": "concessions",
           "excerpt": "50 per cent rates rebate up to $750 per year, $133 PFESL rebate per year."
-        }
+        },
+        "extraSources": [
+          {
+            "statement": "Cost of Living Statement",
+            "document": "2026-27-ACT-Budget-Cost-of-Living-Statement.docx",
+            "heading": "Property related taxes and fees",
+            "anchor": "property-related-taxes-and-fees",
+            "excerpt": "The pensioner PFESL rebate will increase by $18, to $133."
+          },
+          {
+            "statement": "Cost of Living Statement",
+            "document": "2026-27-ACT-Budget-Cost-of-Living-Statement.docx",
+            "heading": "Property related taxes and fees",
+            "anchor": "property-related-taxes-and-fees",
+            "excerpt": "The average residential general rates bill (inclusive of levies) will increase by 5 per cent."
+          }
+        ]
       },
       {
         "id": "col-public-transport",
         "summary": "Some people pay less, or nothing, on buses and light rail.",
+        "detail": [
+          "Concession fares mean reduced or free travel on Transport Canberra buses and light rail.",
+          "Fares themselves went up 2.75 per cent in January 2026. There is a monthly cap on how many trips you pay for, and in 2026-27 the cap for tertiary students drops to match the one for school students."
+        ],
         "source": {
           "statement": "Cost of Living Statement",
+          "document": "2026-27-ACT-Budget-Cost-of-Living-Statement.docx",
           "heading": "Concessions",
+          "anchor": "concessions",
           "excerpt": "Reduced or free fares on Transport Canberra bus and light rail services."
-        }
+        },
+        "extraSources": [
+          {
+            "statement": "Cost of Living Statement",
+            "document": "2026-27-ACT-Budget-Cost-of-Living-Statement.docx",
+            "heading": "Public transport fares",
+            "anchor": "public-transport-fares",
+            "excerpt": "Public transport fares increased by 2.75 per cent from 10 January 2026. From 8 April until 30 June 2026, the maximum monthly cap for the number of paid trips on public transport has been halved. In 2026-27, the cap for tertiary students will be reduced even further to align with that for primary and secondary school students."
+          }
+        ]
       },
       {
         "id": "col-housing-crisis-fund",
         "summary": "A new fund and payment is being set up for renters under financial stress.",
+        "detail": [
+          "This is aimed at private renters who are under rental stress or in financial hardship.",
+          "It replaces the Rent Relief Fund, which stopped in July 2025.",
+          "The papers allocate $5.2 million to it over two years from 2026-27."
+        ],
         "source": {
           "statement": "Wellbeing Budget Statement",
+          "document": "2026-27-ACT-Budget-Wellbeing-Budget-Statement.docx",
           "heading": "Cost of living",
+          "anchor": "cost-of-living",
           "excerpt": "Establishing a new Housing Crisis Support Fund and a Crisis Support Payment to provide targeted assistance to low income households experiencing rental stress."
-        }
+        },
+        "extraSources": [
+          {
+            "statement": "Housing Statement",
+            "document": "2026-27-ACT-Budget-Housing-Statement.docx",
+            "heading": "Support for private market renters",
+            "anchor": "build-to-rent",
+            "excerpt": "The ACT Government will continue to provide financial support to private renters experiencing rental stress or those experiencing financial hardship, through the establishment of the Housing Crisis Support Fund and a Crisis Support Payment. This measure will replace the previous Rent Relief Fund that ceased in July 2025"
+          },
+          {
+            "statement": "Women's Budget Statement",
+            "document": "2026-27-Womens-Budget-Statement.docx",
+            "heading": "Upgrades and support for tenants",
+            "anchor": "upgrades-and-support-for-tenants",
+            "excerpt": "A budget allocation of $5.2 million for the Housing Crisis Support Fund initiative over 2 years from 2026-27 will support women in low-income and single-parent households to maintain housing stability, reduce financial stress, and lower the risk of homelessness by providing rent relief and targeted crisis payments. Women represented 57 per cent of previous rent relief recipients."
+          }
+        ]
       }
     ],
     "concessions": [

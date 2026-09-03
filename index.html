@@ -3,157 +3,273 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Budget App</title>
+<title>Find yourself in the Budget</title>
 
-<!-- Pinned versions on purpose. An unpinned CDN library shipped a breaking
-     change once and silently broke the live Budget Buddy site. Always pin. -->
-<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js" crossorigin></script>
+<!-- No CDN, no framework, no fetch. This page must work with the network
+     disconnected, from file:// as well as from a web server. data.js is a
+     plain script tag for exactly that reason.
 
-<!-- YOUR DATA GOES IN data.js, NOT IN THIS FILE.
-     It's a plain script tag, not fetch(), so this page works both when you
-     double-click it locally AND when it's live on GitHub Pages. -->
+     There are deliberately NO links in this page, to anywhere. Every source
+     a reader can see is text already carried in data.js. -->
 <script src="data.js"></script>
 
 <style>
   :root{
-    --surface:#fcfcfb; --card:#fff; --line:#e6e2da;
-    --ink:#2b2420; --ink-2:#5c5249; --ink-3:#857a6e;
-    --accent-a:#b85042;   /* validated pair: use for one series */
-    --accent-b:#0f7ba8;   /* validated pair: use for the other  */
+    --surface:#fcfcfb; --card:#fff; --line:#e6e2da; --quiet:#faf9f6;
+    --ink:#2b2420; --ink-2:#544b43; --ink-3:#6f655b;
+    --accent:#0f5f80; --accent-ink:#0d4f6b;
+    --col-bg:#f4f7f4; --col-line:#c3d3c6; --col-ink:#2c4433;
   }
   *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
   body{margin:0;background:var(--surface);color:var(--ink);
     font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:860px;margin:0 auto;padding:28px 20px 80px}
-  h1{font-size:26px;line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
-  .sub{color:var(--ink-2);margin:0 0 26px;font-size:15px}
-  h2{font-size:13px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-3);
-    margin:34px 0 12px;font-weight:600}
-  .grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
-  button.card{text-align:left;font:inherit;color:inherit;cursor:pointer}
-  button.card:focus-visible{outline:3px solid var(--accent-b);outline-offset:2px}
-  button.card[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
-  .lab{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
-  .val{font-size:27px;font-weight:600;letter-spacing:-.02em;margin-top:4px;
-    font-variant-numeric:tabular-nums}
-  /* Bars: .track and .bar MUST be display:block. They are spans in a lot of
-     generated code, and inline elements ignore width and height. */
-  .track{display:block;flex:1;height:16px;background:#f2efe9;border-radius:0 4px 4px 0}
-  .bar{display:block;height:16px;border-radius:0 4px 4px 0}
-  table{width:100%;border-collapse:collapse;font-size:14px;background:var(--card);
-    border:1px solid var(--line);border-radius:10px;overflow:hidden}
-  th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line)}
-  th:first-child,td:first-child{text-align:left}
-  thead th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;
-    color:var(--ink-3);background:#faf9f6}
-  td{font-variant-numeric:tabular-nums}
-  footer{margin-top:38px;padding-top:18px;border-top:1px solid var(--line);
+  .wrap{max-width:720px;margin:0 auto;padding:24px 16px 72px}
+
+  h1{font-size:25px;line-height:1.2;margin:0 0 8px;letter-spacing:-.01em}
+  .lede{color:var(--ink-2);margin:0 0 26px;font-size:16px}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-3);
+    margin:0 0 10px;font-weight:600}
+
+  /* ---- pickers ---- */
+  .picker{display:grid;gap:8px;grid-template-columns:1fr;margin:0 0 10px}
+  @media(min-width:560px){.picker{grid-template-columns:1fr 1fr}}
+  .toggle{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+    font:inherit;color:inherit;cursor:pointer;background:var(--card);
+    border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-height:48px}
+  .toggle:hover{border-color:#cfc8bd}
+  .toggle:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .toggle[aria-pressed="true"]{border-color:var(--accent);
+    box-shadow:inset 0 0 0 1px var(--accent);background:#f2f8fb}
+  .box{flex:0 0 auto;width:18px;height:18px;border:1.5px solid #a79d90;border-radius:4px;
+    display:grid;place-items:center;background:#fff}
+  .toggle[aria-pressed="true"] .box{border-color:var(--accent);background:var(--accent)}
+  .box svg{display:none;width:12px;height:12px}
+  .toggle[aria-pressed="true"] .box svg{display:block}
+
+  .col-toggle{background:var(--col-bg);border-color:var(--col-line);
+    border-style:dashed;margin-bottom:6px}
+  .col-toggle[aria-pressed="true"]{background:#e8f0ea;border-color:var(--col-ink);
+    box-shadow:inset 0 0 0 1px var(--col-ink)}
+  .col-toggle[aria-pressed="true"] .box{border-color:var(--col-ink);background:var(--col-ink)}
+  .col-toggle .sub{display:block;font-size:13px;color:var(--col-ink);margin-top:1px}
+
+  /* ---- cards ---- */
+  .results{margin-top:30px;display:grid;gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:18px 16px}
+  .card h3{margin:0;font-size:19px;line-height:1.25;letter-spacing:-.01em}
+  .figure{margin:12px 0 0;font-size:31px;font-weight:600;letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums;line-height:1.1}
+  .figure .qual{display:block;font-size:14px;font-weight:400;color:var(--ink-3);
+    letter-spacing:0;margin-bottom:1px}
+  .figure .unit{font-size:19px;font-weight:500}
+  .period{margin:3px 0 0;font-size:14px;color:var(--ink-3)}
+  .blurb{margin:12px 0 0;color:var(--ink-2);font-size:15px}
+
+  .points{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:14px}
+  .points li{border-top:1px solid var(--line);padding-top:14px}
+  .summary{margin:0;font-size:16px}
+  .src{margin:6px 0 0;font-size:13px;color:var(--ink-3)}
+  .todo{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line);
+    font-size:14px;color:var(--ink-3);font-style:italic}
+
+  details{margin-top:8px}
+  summary{font-size:13px;color:var(--accent-ink);cursor:pointer;
+    display:inline-block;padding:4px 0;min-height:24px}
+  summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:3px}
+  blockquote{margin:8px 0 0;padding:11px 13px;background:var(--quiet);
+    border-left:3px solid var(--line);border-radius:0 6px 6px 0;
+    font-size:14px;color:var(--ink-2)}
+
+  /* ---- cost of living card ---- */
+  .card.col{background:var(--col-bg);border-color:var(--col-line)}
+  .card.col .framing{margin:5px 0 0;font-size:15px;color:var(--col-ink);font-weight:600}
+  .card.col .points li{border-top-color:var(--col-line)}
+  .note{margin:14px 0 0;padding:11px 13px;background:#fff;border:1px solid var(--col-line);
+    border-radius:8px;font-size:14px;color:var(--col-ink)}
+  .card.col blockquote{background:#fff;border-left-color:var(--col-line)}
+
+  .empty{margin-top:30px;padding:22px 16px;border:1px dashed var(--line);
+    border-radius:12px;color:var(--ink-3);font-size:15px;text-align:center}
+  footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
     font-size:13px;color:var(--ink-3)}
-  a{color:var(--accent-b)}
 </style>
 </head>
 <body>
-<div id="root" class="wrap"></div>
 
-<script type="text/babel">
-const {useState, useEffect} = React;
+<main class="wrap">
+  <h1>Find yourself in the Budget</h1>
+  <p class="lede">Trying to work out what the latest ACT Budget means for you?
+    Pick the areas you care about.</p>
 
-// ─────────────────────────────────────────────────────────────
-// data.js sets window.DATA. Until you make your own, this is an
-// empty array and the page tells you so.
-// ─────────────────────────────────────────────────────────────
-const DATA = (typeof window !== "undefined" && window.DATA) || [];
+  <h2 id="areas-label">Pick your areas</h2>
+  <div class="picker" id="areas" role="group" aria-labelledby="areas-label"></div>
 
-const money = n => (n < 0 ? "-$" : "$") + Math.abs(Math.round(n)).toLocaleString("en-AU");
+  <div id="col-picker"></div>
 
-function App() {
-  const [sel, setSel] = useState(() => localStorage.getItem("app.sel") || "");
-  useEffect(() => { localStorage.setItem("app.sel", sel); }, [sel]);
+  <section class="results" id="results" aria-live="polite" aria-label="What you picked"></section>
 
-  if (!DATA.length) {
-    return (
-      <React.Fragment>
-        <h1>Hello, Budget</h1>
-        <p className="sub">
-          Your template is live. If you can read this on your own GitHub Pages
-          URL, your setup is done and you're ready for the workshop.
-        </p>
-        <div className="card">
-          <div className="lab">Next step</div>
-          <p style={{marginBottom:0}}>
-            Replace <code>data.js</code> with your own extracted data, then
-            build your screens below. See <code>ANNOTATED.md</code> for a
-            walkthrough of this file.
-          </p>
-        </div>
-        <div className="card" style={{marginTop:10, background:"#fdf6ec",
-             borderColor:"#e8d6b8"}}>
-          <div className="lab" style={{color:"#6b4f27"}}>Already uploaded your data?</div>
-          <p style={{marginBottom:0, color:"#6b4f27"}}>
-            Then your browser is showing you a <strong>cached copy</strong> of the
-            old empty <code>data.js</code>. Hard refresh:
-            {" "}<strong>Cmd+Shift+R</strong> on Mac, <strong>Ctrl+Shift+R</strong> on
-            Windows. This catches almost everyone once.
-          </p>
-        </div>
-      </React.Fragment>
-    );
+  <footer id="foot"></footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var DATA = window.DATA;
+  var KEY = "budget-selected-areas";
+
+  // localStorage is optional. Private windows and locked-down browsers throw on
+  // access, so every touch is wrapped and the app works fine without it.
+  function loadSaved() {
+    try {
+      var raw = window.localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+  function save(ids) {
+    try { window.localStorage.setItem(KEY, JSON.stringify(ids)); } catch (e) {}
   }
 
-  const item = DATA.find(d => String(d.id) === sel) || DATA[0];
+  var validIds = DATA.areas.map(function (a) { return a.id; }).concat([DATA.costOfLiving.id]);
+  var selected = loadSaved().filter(function (id) { return validIds.indexOf(id) !== -1; });
 
-  return (
-    <React.Fragment>
-      {/* ── 1. TITLE ─────────────────────────────────────────── */}
-      <h1>My Budget App</h1>
-      <p className="sub">One sentence: who this is for and what they get in 30 seconds.</p>
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined && text !== null) n.textContent = text;
+    return n;
+  }
 
-      {/* ── 2. PICK ONE ──────────────────────────────────────── */}
-      <h2>1. Pick one</h2>
-      <div className="grid">
-        {DATA.map(d => (
-          <button key={d.id} className="card" aria-pressed={String(d.id) === sel}
-                  onClick={() => setSel(String(d.id))}>
-            <b>{d.name || d.id}</b>
-          </button>
-        ))}
-      </div>
+  function tick() {
+    var box = el("span", "box");
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 12 12");
+    svg.setAttribute("aria-hidden", "true");
+    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", "M1.5 6.5 L4.5 9.5 L10.5 2.5");
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", "#fff");
+    path.setAttribute("stroke-width", "2");
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(path);
+    box.appendChild(svg);
+    return box;
+  }
 
-      {/* ── 3. HEADLINE NUMBERS ──────────────────────────────── */}
-      <h2>2. What it means</h2>
-      <div className="grid">
-        <div className="card">
-          <div className="lab">Your headline number</div>
-          <div className="val">{money(item.value || 0)}</div>
-        </div>
-        {/* ADD YOUR OTHER STAT TILES HERE */}
-      </div>
+  function toggleButton(id, label, extraClass, subLabel) {
+    var b = el("button", "toggle" + (extraClass ? " " + extraClass : ""));
+    b.type = "button";
+    b.setAttribute("aria-pressed", selected.indexOf(id) !== -1 ? "true" : "false");
+    b.appendChild(tick());
+    var wrap = el("span");
+    wrap.appendChild(el("span", null, label));
+    if (subLabel) wrap.appendChild(el("span", "sub", subLabel));
+    b.appendChild(wrap);
+    b.addEventListener("click", function () {
+      var i = selected.indexOf(id);
+      if (i === -1) { selected.push(id); } else { selected.splice(i, 1); }
+      b.setAttribute("aria-pressed", i === -1 ? "true" : "false");
+      save(selected);
+      render();
+    });
+    return b;
+  }
 
-      {/* ── 4. THE DETAIL ────────────────────────────────────── */}
-      {/* ADD YOUR TABLE OR CHART HERE */}
+  // Honesty rule 1: the statement AND the heading are always named (headings
+  // like "Purpose" repeat across statements), and the verbatim excerpt sits
+  // one click away, on the page, with nothing to follow off-site.
+  function sourceBlock(source) {
+    var frag = document.createDocumentFragment();
+    frag.appendChild(el("p", "src", source.statement + " · " + source.heading));
+    var d = el("details");
+    d.appendChild(el("summary", null, "Where this comes from"));
+    d.appendChild(el("blockquote", null, "“" + source.excerpt + "”"));
+    frag.appendChild(d);
+    return frag;
+  }
 
-      {/* ── 5. CITATION. Do not delete this. ─────────────────── */}
-      <footer>
-        <p>
-          Every figure comes from <strong>[NAME THE EXACT TABLE AND STATEMENT]</strong>,
-          2026-27 ACT Budget. See the{" "}
-          <a href="https://www.treasury.act.gov.au/budget/budget-2026-27/budget-papers-and-statements">
-            official Budget papers</a>.
-        </p>
-        <p>
-          This is an illustrative guide, not financial advice or an eligibility
-          determination. Check <a href="https://www.act.gov.au">act.gov.au</a> for
-          eligibility criteria and exact figures.
-        </p>
-        <p>Your selection is saved in this browser only. Nothing is sent anywhere.</p>
-      </footer>
-    </React.Fragment>
-  );
-}
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  function pointsList(points) {
+    var ul = el("ul", "points");
+    points.forEach(function (p) {
+      var li = el("li");
+      li.appendChild(el("p", "summary", p.summary));
+      li.appendChild(sourceBlock(p.source));
+      ul.appendChild(li);
+    });
+    return ul;
+  }
+
+  function areaCard(area) {
+    var card = el("article", "card");
+    card.appendChild(el("h3", null, area.label));
+
+    var fig = el("p", "figure");
+    if (area.headline.qualifier) fig.appendChild(el("span", "qual", area.headline.qualifier));
+    fig.appendChild(document.createTextNode("$" + area.headline.value + " "));
+    fig.appendChild(el("span", "unit", area.headline.unit));
+    card.appendChild(fig);
+    card.appendChild(el("p", "period", area.headline.period));
+    card.appendChild(sourceBlock(area.source));
+    card.appendChild(el("p", "blurb", area.blurb));
+
+    if (area.points.length) {
+      card.appendChild(pointsList(area.points));
+    } else {
+      // Said plainly rather than left blank: this area has a figure but nobody
+      // has written its plain-English points yet.
+      card.appendChild(el("p", "todo",
+        "Plain-English points for this area haven’t been written yet."));
+    }
+    return card;
+  }
+
+  // Cost of living is a separate entry point, not an eighth area, so it carries
+  // no dollar figure and is not styled into the same visual series.
+  function colCard(col) {
+    var card = el("article", "card col");
+    card.appendChild(el("h3", null, col.label));
+    card.appendChild(el("p", "framing", col.framing));
+    card.appendChild(el("p", "blurb", col.blurb));
+    card.appendChild(el("p", "note", col.note));
+    card.appendChild(pointsList(col.points));
+    return card;
+  }
+
+  function render() {
+    var results = document.getElementById("results");
+    results.textContent = "";
+
+    if (!selected.length) {
+      results.appendChild(el("p", "empty",
+        "Nothing picked yet. Choose an area above to see what the Budget puts into it."));
+      return;
+    }
+    DATA.areas.forEach(function (a) {
+      if (selected.indexOf(a.id) !== -1) results.appendChild(areaCard(a));
+    });
+    if (selected.indexOf(DATA.costOfLiving.id) !== -1) {
+      results.appendChild(colCard(DATA.costOfLiving));
+    }
+  }
+
+  var areasHost = document.getElementById("areas");
+  DATA.areas.forEach(function (a) {
+    areasHost.appendChild(toggleButton(a.id, a.label));
+  });
+
+  document.getElementById("col-picker").appendChild(
+    toggleButton(DATA.costOfLiving.id, DATA.costOfLiving.label, "col-toggle",
+                 DATA.costOfLiving.framing));
+
+  document.getElementById("foot").textContent =
+    "Figures and quoted wording are from the " + DATA.meta.budget +
+    " ACT Budget papers. Every quote on this page is reproduced from those papers.";
+
+  render();
+})();
 </script>
 </body>
 </html>

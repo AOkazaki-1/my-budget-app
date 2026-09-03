@@ -467,7 +467,15 @@ window.DATA = {
             "netDisposableIncome": 25744.0,
             "change": 933.0
           }
-        }
+        },
+        "traits": {
+          "tenure": "own",
+          "household": "single",
+          "pensioner": true,
+          "cars": 0
+        },
+        "outlier": false,
+        "outlierNote": null
       },
       {
         "id": 2,
@@ -504,7 +512,15 @@ window.DATA = {
             "netDisposableIncome": 39742.0,
             "change": 6015.0
           }
-        }
+        },
+        "traits": {
+          "tenure": "own",
+          "household": "couple",
+          "pensioner": true,
+          "cars": 2
+        },
+        "outlier": true,
+        "outlierNote": "This household's change is a one-off. Its description says it is downsizing to a unit in 2026-27, which is what moves the figure."
       },
       {
         "id": 3,
@@ -541,7 +557,15 @@ window.DATA = {
             "netDisposableIncome": 27511.0,
             "change": 670.0
           }
-        }
+        },
+        "traits": {
+          "tenure": "own",
+          "household": "single-parent",
+          "pensioner": false,
+          "cars": 1
+        },
+        "outlier": false,
+        "outlierNote": null
       },
       {
         "id": 4,
@@ -578,7 +602,15 @@ window.DATA = {
             "netDisposableIncome": 58509.0,
             "change": 2208.0
           }
-        }
+        },
+        "traits": {
+          "tenure": "own",
+          "household": "single",
+          "pensioner": true,
+          "cars": 1
+        },
+        "outlier": false,
+        "outlierNote": null
       },
       {
         "id": 5,
@@ -615,7 +647,15 @@ window.DATA = {
             "netDisposableIncome": 54204.0,
             "change": 1306.0
           }
-        }
+        },
+        "traits": {
+          "tenure": "own",
+          "household": "single",
+          "pensioner": false,
+          "cars": 0
+        },
+        "outlier": false,
+        "outlierNote": null
       },
       {
         "id": 6,
@@ -652,7 +692,15 @@ window.DATA = {
             "netDisposableIncome": 76298.0,
             "change": -337.0
           }
-        }
+        },
+        "traits": {
+          "tenure": "buying",
+          "household": "single",
+          "pensioner": false,
+          "cars": 1
+        },
+        "outlier": false,
+        "outlierNote": null
       },
       {
         "id": 7,
@@ -689,7 +737,15 @@ window.DATA = {
             "netDisposableIncome": 155747.0,
             "change": 675.0
           }
-        }
+        },
+        "traits": {
+          "tenure": "buying",
+          "household": "couple-children",
+          "pensioner": false,
+          "cars": 2
+        },
+        "outlier": false,
+        "outlierNote": null
       },
       {
         "id": 8,
@@ -726,7 +782,15 @@ window.DATA = {
             "netDisposableIncome": 199220.0,
             "change": 5828.0
           }
-        }
+        },
+        "traits": {
+          "tenure": "own",
+          "household": "couple-children",
+          "pensioner": false,
+          "cars": 2
+        },
+        "outlier": false,
+        "outlierNote": null
       },
       {
         "id": 9,
@@ -763,8 +827,198 @@ window.DATA = {
             "netDisposableIncome": 293075.0,
             "change": 7316.0
           }
-        }
+        },
+        "traits": {
+          "tenure": "own",
+          "household": "couple-children",
+          "pensioner": false,
+          "cars": 2
+        },
+        "outlier": false,
+        "outlierNote": null
       }
-    ]
+    ],
+    "questions": [
+      {
+        "id": "tenure",
+        "question": "Do you own your home, are you buying it, or do you rent?",
+        "options": [
+          {
+            "value": "own",
+            "label": "I own it"
+          },
+          {
+            "value": "buying",
+            "label": "I'm buying it"
+          },
+          {
+            "value": "rent",
+            "label": "I rent"
+          }
+        ]
+      },
+      {
+        "id": "household",
+        "question": "Roughly, what's your household?",
+        "options": [
+          {
+            "value": "single",
+            "label": "Single"
+          },
+          {
+            "value": "couple",
+            "label": "Couple"
+          },
+          {
+            "value": "single-parent",
+            "label": "Single parent"
+          },
+          {
+            "value": "couple-children",
+            "label": "Couple with children"
+          }
+        ]
+      },
+      {
+        "id": "pensioner",
+        "question": "Are you a pensioner or retiree?",
+        "options": [
+          {
+            "value": "yes",
+            "label": "Yes"
+          },
+          {
+            "value": "no",
+            "label": "No"
+          }
+        ]
+      },
+      {
+        "id": "cars",
+        "question": "How many cars?",
+        "options": [
+          {
+            "value": "0",
+            "label": "None"
+          },
+          {
+            "value": "1",
+            "label": "One"
+          },
+          {
+            "value": "2",
+            "label": "Two or more"
+          }
+        ]
+      }
+    ],
+    "concessionColumns": [
+      {
+        "field": "ratesPfeslConcession",
+        "assistance": "Pensioner General Rates Rebate, PFESL Rebate"
+      },
+      {
+        "field": "conveyanceDutyConcession",
+        "assistance": "Conveyance duty concessions"
+      },
+      {
+        "field": "vehicleConcession",
+        "assistance": "Motor vehicle registration concessions"
+      },
+      {
+        "field": "publicTransportConcession",
+        "assistance": "Public transport concessions"
+      },
+      {
+        "field": "utilitiesConcession",
+        "assistance": "Electricity, Gas and Water Rebate"
+      }
+    ],
+    "breakdown": [
+      {
+        "field": "disposableIncome",
+        "label": "Disposable income",
+        "group": "income"
+      },
+      {
+        "field": "ratesPfeslSflHl",
+        "label": "Rates, PFESL, SFL, HL",
+        "group": "charge"
+      },
+      {
+        "field": "conveyanceDuty",
+        "label": "Conveyance duty",
+        "group": "charge"
+      },
+      {
+        "field": "vehicleCharges",
+        "label": "Vehicle charges",
+        "group": "charge"
+      },
+      {
+        "field": "publicTransportFares",
+        "label": "Public transport fares",
+        "group": "charge"
+      },
+      {
+        "field": "utilities",
+        "label": "Utilities",
+        "group": "charge"
+      },
+      {
+        "field": "ratesPfeslConcession",
+        "label": "Rates and PFESL concessions",
+        "group": "concession"
+      },
+      {
+        "field": "conveyanceDutyConcession",
+        "label": "Conveyance duty concession",
+        "group": "concession"
+      },
+      {
+        "field": "vehicleConcession",
+        "label": "Vehicle concession",
+        "group": "concession"
+      },
+      {
+        "field": "publicTransportConcession",
+        "label": "Public transport concession",
+        "group": "concession"
+      },
+      {
+        "field": "utilitiesConcession",
+        "label": "Utilities concession",
+        "group": "concession"
+      },
+      {
+        "field": "netDisposableIncome",
+        "label": "Net disposable income",
+        "group": "net"
+      }
+    ],
+    "personalise": {
+      "cta": "Find the household closest to yours",
+      "intro": "Answer four questions and we will point you at the household Treasury modelled that is closest to yours. This is not an eligibility check, and it is not about you: it is the closest of nine published examples.",
+      "resultLead": "The household Treasury modelled closest to yours is",
+      "caveat": "This is the closest published example, not an assessment of your circumstances. Nothing here says what you can or cannot claim.",
+      "renterFinding": "Treasury did not model a renting household. All nine published scenarios either own their home or are buying it, so there is no closest match to show you. That is a gap in the published data, not a problem with your answers.",
+      "renterOffer": "What we can show you is the full list of concessions and what each one is worth.",
+      "countNote": "The statement's own text says eight scenarios are presented. The table beneath it lists nine, which is what this page uses.",
+      "columnsNote": "The scenario table only tracks five of the eight concessions. Spectacles, taxi and driver licence concessions have no column in it, so they never appear against a household here."
+    },
+    "scenariosSource": {
+      "statement": "Cost of Living Statement",
+      "document": "2026-27-ACT-Budget-Cost-of-Living-Statement.docx",
+      "heading": "ACT Household Scenarios",
+      "anchor": "act-household-scenarios",
+      "excerpt": "Under section 11(1)(f) of the Financial Management Act 1996, the annual Budget must provide a statement on the effect of ACT taxes and fees on households and the concessions that offset them. Examples of how ACT Government taxes and fees, utilities and the offsetting concessions impact ACT households are in Table 3.3.2 below. The Government is mindful that it is not possible to capture the impact of taxes, fees and utility charges on every type of household, as financial circumstances or specific usage patterns of government services will vary. Therefore, eight scenarios are presented as a basis for highlighting the different impacts for various household types and circumstances."
+    },
+    "concessionsSource": {
+      "statement": "Cost of Living Statement",
+      "document": "2026-27-ACT-Budget-Cost-of-Living-Statement.docx",
+      "heading": "Concessions",
+      "anchor": "concessions",
+      "excerpt": "The Government provides a wide range of concessions to eligible households and individuals to assist with living expenses such as general rates, conveyance duty, utility bills, driver licence fees, motor vehicle registration fees and public transport fares."
+    }
   }
 };

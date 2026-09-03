@@ -106,6 +106,64 @@
     border-radius:8px;font-size:14px;color:var(--col-ink)}
   .card.col blockquote{background:#fff;border-left-color:var(--col-line)}
 
+  /* ---- stage 3: cost of living personalisation ---- */
+  .cta{margin-top:16px;width:100%;font:inherit;font-size:15px;font-weight:600;
+    color:#fff;background:var(--col-ink);border:1px solid var(--col-ink);
+    border-radius:9px;padding:12px 14px;min-height:48px;cursor:pointer}
+  .cta:hover{background:#22351f}
+  .cta:focus-visible{outline:3px solid var(--col-ink);outline-offset:2px}
+  .qform{margin-top:14px}
+  .qintro{margin:0 0 14px;font-size:14px;color:var(--col-ink)}
+  fieldset.q{border:0;margin:0 0 16px;padding:0}
+  fieldset.q legend{padding:0;font-size:15px;font-weight:600;color:var(--ink);
+    margin-bottom:8px}
+  .opt{display:flex;align-items:center;gap:10px;background:#fff;
+    border:1px solid var(--col-line);border-radius:8px;padding:10px 12px;
+    margin-bottom:6px;min-height:44px;cursor:pointer;font-size:15px}
+  .opt:hover{border-color:var(--col-ink)}
+  .opt input{width:18px;height:18px;margin:0;accent-color:var(--col-ink);flex:0 0 auto}
+  .opt:focus-within{outline:3px solid var(--col-ink);outline-offset:2px}
+  .qerr{margin:0 0 12px;font-size:14px;color:#8a2f22;font-weight:600}
+
+  .result{margin-top:18px;background:#fff;border:1px solid var(--col-line);
+    border-radius:10px;padding:16px 14px}
+  .result h4{margin:0 0 4px;font-size:16px;line-height:1.3}
+  .result .verbatim{margin:0 0 10px;font-size:15px;color:var(--ink-2)}
+  .matchline{margin:0 0 12px;font-size:14px;color:var(--ink-3)}
+  .tie{margin:0 0 12px;padding:10px 12px;background:var(--quiet);
+    border:1px solid var(--line);border-radius:8px;font-size:14px;color:var(--ink-2)}
+  .tieswitch{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .tieswitch button{font:inherit;font-size:13px;background:#fff;color:var(--ink);
+    border:1px solid var(--line);border-radius:999px;padding:7px 12px;cursor:pointer;
+    min-height:36px}
+  .tieswitch button[aria-pressed="true"]{background:var(--col-ink);color:#fff;
+    border-color:var(--col-ink)}
+  .tieswitch button:focus-visible{outline:3px solid var(--col-ink);outline-offset:2px}
+  .outlier{margin:0 0 12px;padding:10px 12px;background:#fdf6ec;
+    border:1px solid #e3cfa8;border-radius:8px;font-size:14px;color:#5c4415}
+  .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 12px}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:340px}
+  caption{text-align:left;font-size:13px;color:var(--ink-3);padding-bottom:7px}
+  th,td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left;font-weight:400}
+  thead th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--ink-3);background:var(--quiet);font-weight:600}
+  td{font-variant-numeric:tabular-nums}
+  tr.group td{background:var(--quiet);font-size:12px;text-transform:uppercase;
+    letter-spacing:.05em;color:var(--ink-3);font-weight:600}
+  tr.net td{font-weight:700;border-top:2px solid var(--ink-3)}
+  tr.change td{font-weight:700}
+  .gotlist{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:9px}
+  .gotlist li{border:1px solid var(--col-line);border-radius:8px;padding:10px 12px;
+    background:var(--col-bg)}
+  .gotname{margin:0;font-size:15px;font-weight:600;color:var(--col-ink)}
+  .gotdesc{margin:3px 0 0;font-size:14px;color:var(--ink-2)}
+  .gotmeta{margin:3px 0 0;font-size:13px;color:var(--ink-3)}
+  .smallnote{margin:10px 0 0;font-size:13px;color:var(--ink-3)}
+  .renter{margin:0 0 12px;padding:12px 13px;background:var(--quiet);
+    border-left:3px solid var(--col-ink);border-radius:0 8px 8px 0;font-size:15px;
+    color:var(--ink-2)}
+
   .empty{margin-top:30px;padding:22px 16px;border:1px dashed var(--line);
     border-radius:12px;color:var(--ink-3);font-size:15px;text-align:center}
   footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
@@ -287,6 +345,284 @@
     return card;
   }
 
+  // ---- stage 3: cost of living personalisation --------------------------
+  // Scenario figures are whole dollars. Area headlines are $ million and
+  // concession costs are $ thousand; the three never meet in a calculation.
+  function money(n) {
+    var neg = n < 0, v = Math.round(Math.abs(n)).toString();
+    return (neg ? "-$" : "$") + v.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+  function signedMoney(n) {
+    return (n > 0 ? "+" : "") + money(n);
+  }
+
+  var QUESTION_LABEL = {
+    tenure: "whether you own, are buying or rent",
+    household: "your household",
+    pensioner: "being a pensioner or retiree",
+    cars: "how many cars"
+  };
+
+  function traitMatches(answers, traits) {
+    return {
+      tenure:    answers.tenure === traits.tenure,
+      household: answers.household === traits.household,
+      pensioner: (answers.pensioner === "yes") === traits.pensioner,
+      cars:      parseInt(answers.cars, 10) === traits.cars
+    };
+  }
+
+  // Every scenario is scored on the same four answers. Ties are common - more
+  // than half of all answer combinations produce one - because Treasury also
+  // separates households by income quintile, which we do not ask about. So we
+  // show every equally close household rather than silently picking one.
+  function closestScenarios(col, answers) {
+    var scored = col.scenarios.map(function (sc) {
+      var m = traitMatches(answers, sc.traits);
+      var n = 0;
+      Object.keys(m).forEach(function (k) { if (m[k]) n++; });
+      return { scenario: sc, matches: m, score: n };
+    });
+    var best = Math.max.apply(null, scored.map(function (x) { return x.score; }));
+    return scored.filter(function (x) { return x.score === best; });
+  }
+
+  function breakdownTable(col, sc) {
+    var years = ["2025-26", "2026-27"];
+    var wrap = el("div", "tablewrap");
+    var t = el("table");
+    t.appendChild(el("caption", null,
+      "What this modelled household pays and receives, in whole dollars."));
+
+    var thead = el("thead"), hr = el("tr");
+    ["", years[0], years[1]].forEach(function (h, i) {
+      var th = el("th", null, h);
+      th.scope = "col";
+      if (i === 0) th.textContent = "Item";
+      hr.appendChild(th);
+    });
+    thead.appendChild(hr);
+    t.appendChild(thead);
+
+    var tb = el("tbody"), lastGroup = null;
+    var GROUP_TITLE = { charge: "Taxes, fees and charges", concession: "Concessions" };
+    col.breakdown.forEach(function (row) {
+      if (GROUP_TITLE[row.group] && row.group !== lastGroup) {
+        var gr = el("tr", "group");
+        var gtd = el("td", null, GROUP_TITLE[row.group]);
+        gtd.colSpan = 3;
+        gr.appendChild(gtd);
+        tb.appendChild(gr);
+      }
+      lastGroup = row.group;
+      var tr = el("tr", row.group === "net" ? "net" : null);
+      var th = el("th", null, row.label);
+      th.scope = "row";
+      tr.appendChild(th);
+      years.forEach(function (y) {
+        var v = sc.years[y][row.field];
+        tr.appendChild(el("td", null, v === null || v === undefined ? "—" : money(v)));
+      });
+      tb.appendChild(tr);
+    });
+
+    var ch = sc.years["2026-27"].change;
+    if (ch !== null && ch !== undefined) {
+      var cr = el("tr", "change");
+      var cth = el("th", null, "Change");
+      cth.scope = "row";
+      cr.appendChild(cth);
+      var blank = el("td", null, "—");
+      cr.appendChild(blank);
+      cr.appendChild(el("td", null, signedMoney(ch)));
+      tb.appendChild(cr);
+    }
+    t.appendChild(tb);
+    wrap.appendChild(t);
+    return wrap;
+  }
+
+  function concessionsReceived(col, sc) {
+    var byName = {};
+    col.concessions.forEach(function (c) { byName[c.assistance] = c; });
+    var got = col.concessionColumns.filter(function (m) {
+      var v = sc.years["2026-27"][m.field];
+      return v !== null && v !== undefined && v > 0;
+    });
+    var frag = document.createDocumentFragment();
+    if (!got.length) {
+      frag.appendChild(el("p", "smallnote",
+        "In 2026-27 this modelled household receives none of the concessions the "
+        + "scenario table tracks."));
+      return frag;
+    }
+    var ul = el("ul", "gotlist");
+    got.forEach(function (m) {
+      var c = byName[m.assistance];
+      var li = el("li");
+      li.appendChild(el("p", "gotname", c.assistance));
+      li.appendChild(el("p", "gotdesc", c.description));
+      li.appendChild(el("p", "gotmeta",
+        "Worth " + money(sc.years["2026-27"][m.field]) + " to this modelled household in "
+        + "2026-27. Estimated take up across the ACT: " + c.estimatedTakeUp + "."));
+      ul.appendChild(li);
+    });
+    frag.appendChild(ul);
+    return frag;
+  }
+
+  function concessionListAll(col) {
+    var ul = el("ul", "gotlist");
+    col.concessions.forEach(function (c) {
+      var li = el("li");
+      li.appendChild(el("p", "gotname", c.assistance));
+      li.appendChild(el("p", "gotdesc", c.description));
+      li.appendChild(el("p", "gotmeta",
+        "Estimated take up in 2026-27: " + c.estimatedTakeUp + "."));
+      ul.appendChild(li);
+    });
+    return ul;
+  }
+
+  function renderMatch(col, host, hits, idx) {
+    host.textContent = "";
+    var hit = hits[idx], sc = hit.scenario, p = col.personalise;
+
+    if (hits.length > 1) {
+      var tie = el("div", "tie");
+      tie.appendChild(el("span", null,
+        hits.length + " of the published households are equally close to your answers. "
+        + "Treasury also separates them by income, which these four questions do not ask "
+        + "about, so there is nothing here to choose between them."));
+      var sw = el("div", "tieswitch");
+      hits.forEach(function (h, i) {
+        var b = el("button", null, "#" + h.scenario.id + " " + h.scenario.suburb);
+        b.type = "button";
+        b.setAttribute("aria-pressed", i === idx ? "true" : "false");
+        b.addEventListener("click", function () { renderMatch(col, host, hits, i); });
+        sw.appendChild(b);
+      });
+      tie.appendChild(sw);
+      host.appendChild(tie);
+    }
+
+    host.appendChild(el("h4", null,
+      p.resultLead + " #" + sc.id + ", " + sc.suburb + "."));
+    // Treasury's own one-line description, verbatim, so the reader can check
+    // our reading of it against the four answers they gave.
+    host.appendChild(el("p", "verbatim", "“" + sc.household + "”"));
+
+    var missed = Object.keys(hit.matches).filter(function (k) { return !hit.matches[k]; });
+    var line = "Matches " + hit.score + " of your 4 answers.";
+    if (missed.length) {
+      line += " Differs on: " + missed.map(function (k) { return QUESTION_LABEL[k]; }).join(", ") + ".";
+    }
+    host.appendChild(el("p", "matchline", line));
+
+    if (sc.outlier && sc.outlierNote) {                    // honesty rule 6
+      host.appendChild(el("p", "outlier", sc.outlierNote));
+    }
+
+    host.appendChild(breakdownTable(col, sc));
+    host.appendChild(el("p", "gotname", "Concessions this modelled household receives"));
+    host.appendChild(concessionsReceived(col, sc));
+
+    host.appendChild(el("p", "smallnote", p.caveat));
+    host.appendChild(el("p", "smallnote", p.columnsNote));
+    host.appendChild(el("p", "smallnote", p.countNote));
+    host.appendChild(whereFrom([col.scenariosSource, col.concessionsSource]));
+  }
+
+  function renderRenter(col, host) {
+    host.textContent = "";
+    var p = col.personalise;
+    // An honest finding about the published data, not a failure state.
+    host.appendChild(el("p", "renter", p.renterFinding));
+    host.appendChild(el("p", "matchline", p.renterOffer));
+    host.appendChild(concessionListAll(col));
+    host.appendChild(el("p", "smallnote", p.caveat));
+    host.appendChild(whereFrom([col.concessionsSource]));
+  }
+
+  function personaliser(col) {
+    var p = col.personalise;
+    var region = el("div", "qform");
+    region.id = "col-personalise";
+    region.hidden = true;
+    region.appendChild(el("p", "qintro", p.intro));
+
+    var form = el("form");
+    form.noValidate = true;
+    var err = el("p", "qerr");
+    err.hidden = true;
+    form.appendChild(err);
+
+    col.questions.forEach(function (q) {
+      var fs = el("fieldset", "q");
+      fs.appendChild(el("legend", null, q.question));
+      q.options.forEach(function (o) {
+        var lab = el("label", "opt");
+        var input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q-" + q.id;
+        input.value = o.value;
+        lab.appendChild(input);
+        lab.appendChild(el("span", null, o.label));
+        fs.appendChild(lab);
+      });
+      form.appendChild(fs);
+    });
+
+    var go = el("button", "cta", "Show the closest household");
+    go.type = "submit";
+    form.appendChild(go);
+
+    var out = el("div", "result");
+    out.hidden = true;
+    out.setAttribute("aria-live", "polite");
+
+    form.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var answers = {}, missing = false;
+      col.questions.forEach(function (q) {
+        var picked = form.querySelector('input[name="q-' + q.id + '"]:checked');
+        if (picked) { answers[q.id] = picked.value; } else { missing = true; }
+      });
+      if (missing) {
+        err.textContent = "Please answer all four questions.";
+        err.hidden = false;
+        out.hidden = true;
+        return;
+      }
+      err.hidden = true;
+      out.hidden = false;
+      if (answers.tenure === "rent") {
+        renderRenter(col, out);
+      } else {
+        renderMatch(col, out, closestScenarios(col, answers), 0);
+      }
+    });
+
+    region.appendChild(form);
+    region.appendChild(out);
+
+    var cta = el("button", "cta", p.cta);
+    cta.type = "button";
+    cta.setAttribute("aria-expanded", "false");
+    cta.setAttribute("aria-controls", region.id);
+    cta.addEventListener("click", function () {
+      var open = cta.getAttribute("aria-expanded") === "true";
+      cta.setAttribute("aria-expanded", open ? "false" : "true");
+      region.hidden = open;
+      cta.textContent = open ? p.cta : "Hide these questions";
+    });
+
+    var frag = document.createDocumentFragment();
+    frag.appendChild(cta);
+    frag.appendChild(region);
+    return frag;
+  }
+
   // Cost of living is a separate entry point, not an eighth area, so it carries
   // no dollar figure and is not styled into the same visual series.
   function colCard(col) {
@@ -296,6 +632,7 @@
     card.appendChild(el("p", "blurb", col.blurb));
     card.appendChild(el("p", "note", col.note));
     card.appendChild(pointsList(col.points));
+    card.appendChild(personaliser(col));
     return card;
   }
 
